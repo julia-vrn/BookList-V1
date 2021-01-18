@@ -18,7 +18,7 @@ app.use(shopRoutes);
 });*/
 
 app.use((req, res)=>{
-    res.render('404.ejs', {pageTitle: "Page Not Found"});
+    res.render('404.ejs', {pageTitle: "Page Not Found", path: '/error'});
 });
 
 app.listen(3000, ()=>{
