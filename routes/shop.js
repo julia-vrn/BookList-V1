@@ -4,13 +4,14 @@ const express = require('express');
 //const rootDir = require('../utilities/path');
 //const adminData = require('./admin');
 const router = express.Router();
-const productsController = require('../controllers/products');
+const shopController = require('../controllers/shop');
 //mini express app pluggable to another express app
 
-router.get('/', productsController.getProduct);
-router.get('/products');
-router.get('/cart');
-router.get('/checkout');
+router.get('/', shopController.getIndex);
+router.get('/products', shopController.getProduct);
+router.get('/cart', shopController.getCart);
+router.get('/checkout', shopController.getCheckout );
+router.get('/orders', shopController.getOrders);
 
 module.exports = router;
 
