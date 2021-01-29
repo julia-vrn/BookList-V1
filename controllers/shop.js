@@ -1,6 +1,7 @@
 //controller for all product-related logic
 //const products = [];
 const Product = require('../models/product');
+const Cart = require('../models/cart');
 
 
 
@@ -20,8 +21,13 @@ exports.getProduct = (req, res) => {
     const productId = req.params.productId;
     Product.findById(productId, product => {
         console.log(product);
+        res.render('shop/product-detail.ejs', {
+            product: product,
+            pageTitle: product.title,
+            path: '/products'
+        });
     });
-    res.redirect('/');
+    
 }
 
 exports.getIndex = (req, res)=> {
@@ -43,6 +49,13 @@ exports.getCart = (req, res) => {
         pageTitle: 'Your Cart'
     });
 }
+
+exports.postCart = (req, res) => {
+    const productId = req.body.productId;
+    console.log(productId);
+    res.redirect('/cart');
+}
+
 
 exports.getOrders = (req, res) => {
     res.render('shop/orders.ejs', {
