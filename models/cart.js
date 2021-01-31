@@ -9,9 +9,11 @@ module.exports = class Cart {
         //add new product / increase quantity
 
         fs.readFile(filePath, (error, fileContent) => {
-            let cart = {products: {}, totalPrie: 0};
+            let cart = {products: [], totalPrice: 0};
             if(!error){
                 cart = JSON.parse(fileContent);
+            } else {
+                console.log("Error reading a file");
             }
             //analyze the cart - find existing product
             const existingProductIndex = cart.products.findIndex(product => product.id === id);
@@ -19,15 +21,15 @@ module.exports = class Cart {
             let updatedProduct;
             if(existingProduct) {
                 updatedProduct = { ...existingProduct};
-                updatedProduct.qty = updatedProduct.qty + 1;
-                cart.products = [...cart.products, updatedProduct];
+                updatedProduct.qty = updatedProduct.qty + 1;//updaye quantity
+                cart.products = [...cart.products];//copy the old array
                 cart.products[existingProductIndex] = updatedProduct; //replace existing products
             } else {
                 updatedProduct = {id: id, qty: 1};
-                cart.products = [...cart.products, updatedProduct];
+                cart.products = [...cart.products, updatedProduct];//just add a new product
             }
 
-            cart.totalPrice = cart.totalPrice + productPrice;
+            cart.totalPrice = cart.totalPrice + +productPrice;
 
             
             fs.writeFile(filePath, JSON.stringify(cart), error => {
