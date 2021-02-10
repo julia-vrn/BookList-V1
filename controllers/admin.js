@@ -9,11 +9,12 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = (req, res)=> {
-    const product = new Product(req.body.title, req.body.imageUrl, req.body.price, req.body.description);
+    const product = new Product(null, req.body.title, req.body.imageUrl, req.body.price, req.body.description);
     console.log(product);
     product.save();
     res.redirect('/');
 }
+
 
 exports.getEditProduct = (req, res, next) => {
     const editMode = req.query.edit;
@@ -32,11 +33,22 @@ exports.getEditProduct = (req, res, next) => {
             editing: editMode, 
             product: product
           });
-    });
-
-    
+    });    
 }
 
+
+exports.postEditProduct = (req, res) => {
+    //create new product instance and populate it
+    const productId = req.body.productId;
+    const updatedTitle = req.body.title;
+    const updatedPrice = req.body.price;
+    const updatedimageUrl = req.body.imageUrl;
+    const updatedDescription = req.body.description;
+
+    const updatedProduct = new Product(productId, updatedTitle, updatedimageUrl, updatedPrice, updatedDescription);
+    updatedProduct.save();
+    res.redirect('/admin/products');
+}
 
 exports.getProducts = (req, res) => {
     Product.fetchAll(products => {
@@ -47,4 +59,11 @@ exports.getProducts = (req, res) => {
             path: '/admin/products'
         });
     });
+}
+
+
+exports.postDeleteProduct = (req, res) => {
+    const productId = req.body.productId;
+    Product.deleteById(productId);
+    res.redirect('/admin/products');
 }

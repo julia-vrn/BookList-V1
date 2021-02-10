@@ -25,7 +25,7 @@ module.exports = class Cart {
                 cart.products = [...cart.products];//copy the old array
                 cart.products[existingProductIndex] = updatedProduct; //replace existing products
             } else {
-                updatedProduct = {id: id, qty: 1};
+                updatedProduct = {id: id, qty: 1};//it's enough to store the ids of the products
                 cart.products = [...cart.products, updatedProduct];//just add a new product
             }
 
@@ -39,6 +39,42 @@ module.exports = class Cart {
           
 
     }
+
+    static deleteProduct(id, productPrice){
+        fs.readFile(filePath, (error, fileContent) => {
+            if(error){
+                return;
+            } 
+
+            const updatedCart = {...JSON.parse(fileContent)};
+            console.log("updated cart " + updatedCart);
+            const product = updatedCart.products.find(product => product.id === id);
+            if(!product){
+                return;
+            }
+            const productQty = product.qty;
+            updatedCart.products = updatedCart.products.filter(product => product.id !== id);
+            updatedCart.totalPrice = updatedCart.totalPrice - productPrice * productQty;
+
+            fs.writeFile(filePath, JSON.stringify(updatedCart), error => {
+                console.log(error);
+            });
+
+        });
+    }
+
+    static getCart(cb) {
+        //access the file and get the products ids
+        fs.readFile(filePath, (error, fileContent) => {
+            const cart = JSON.parse(fileContent);
+            if(error){
+                cb(null)
+            } else {
+                cb(cart);
+            }
+        });
+    }
+
 
 
 }

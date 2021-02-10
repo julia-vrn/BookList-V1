@@ -43,12 +43,6 @@ exports.getIndex = (req, res)=> {
    
 };
 
-exports.getCart = (req, res) => {
-    res.render('shop/cart.ejs', {
-        path: '/cart',
-        pageTitle: 'Your Cart'
-    });
-}
 
 exports.postCart = (req, res) => {
     const productId = req.body.productId;
@@ -69,9 +63,31 @@ exports.getOrders = (req, res) => {
     });
 }
 
-exports.getCheckout = (req, res) => {
-    res.render('shop/checkou', {
-        path: '/checkout',
-        pageTitle: 'Checkout'
+exports.getCart = (req, res) => {
+    Cart.getCart(cart => {
+        Product.fetchAll(products => {
+            const cartProducts = [];
+            for(product of products){
+                const cartProductData = cart.products.find(cartProduct => cartProduct.id === product.id);
+                if(cartProductData) {
+                    cartProducts.push({productData: product, qty: cartProductData.qty});
+                }
+            }
+            res.render('shop/cart.ejs', {
+                path: '/cart',
+                pageTitle: 'Your Cart',
+                products: cartProducts
+            });
+        })
     });
+    
 };
+
+exports.postCartDeleteProduct = (req, res) => {
+    const productId = req.body.productId;
+    //get the price as well before we issue the delete request
+    Product.findById(productId, product => {
+        Cart.deleteProduct(productId, product.price);
+        res.redirect('/cart');
+    });
+}
