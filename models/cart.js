@@ -36,8 +36,6 @@ module.exports = class Cart {
                 console.log(error);
             });
         });
-          
-
     }
 
     static deleteProduct(id, productPrice){

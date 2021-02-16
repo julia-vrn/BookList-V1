@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const ejs = require('ejs');
 const bodyParser = require('body-parser');
+const mongoConnect = require('./utilities/db');
+
 const adminRoute = require('./routes/admin'); //import admin route .js is not needed as it will be added automatically by express
 const shopRoutes = require('./routes/shop');
 const app = express();
@@ -21,6 +23,10 @@ app.use((req, res)=>{
     res.render('404.ejs', {pageTitle: "Page Not Found", path: '/error'});
 });
 
-app.listen(3000, ()=>{
-    console.log('server is up');
+
+mongoConnect(() => {
+    app.listen(3000, ()=>{
+        console.log('server is up');
+    });
 });
+
