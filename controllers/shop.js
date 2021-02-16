@@ -19,7 +19,8 @@ exports.getProducts = (req, res)=> {
 
 exports.getProduct = (req, res) => {
     const productId = req.params.productId;
-    Product.findById(productId, product => {
+    Product.findById(productId)
+    .then(product => {
         console.log(product);
         res.render('shop/product-detail.ejs', {
             product: product,
@@ -31,28 +32,31 @@ exports.getProduct = (req, res) => {
 }
 
 exports.getIndex = (req, res)=> {
-    console.log('log from index');
-    Product.fetchAll(products => {
-         res.render('shop/index.ejs',
-        {
-            products: products,
-            pageTitle: 'Main Page',
-            path: '/'
-        });
+   console.log('log from index');
+    Product.fetchAll()
+    .then(products => {
+      res.render('shop/index.ejs', {
+        products: products,
+        pageTitle: 'Shop',
+        path: '/'
+      });
+    })
+    .catch(err => {
+      console.log(err);
     });
    
 };
 
 
 exports.postCart = (req, res) => {
-    const productId = req.body.productId;
+  /*  const productId = req.body.productId;
     console.log(productId);
     //get product
     Product.findById(productId, (product) => {
         Cart.addProduct(productId, product.price);
     });
     
-    res.redirect('/cart');
+    res.redirect('/cart');*/
 }
 
 

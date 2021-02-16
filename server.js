@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const ejs = require('ejs');
 const bodyParser = require('body-parser');
-const mongoConnect = require('./utilities/db');
+const mongoConnect = require('./utilities/db').mongoConnect;
 
 const adminRoute = require('./routes/admin'); //import admin route .js is not needed as it will be added automatically by express
 const shopRoutes = require('./routes/shop');

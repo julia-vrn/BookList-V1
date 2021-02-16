@@ -4,7 +4,7 @@ const MongoClient = mongodb.MongoClient;
 let _db; //_ - the variable is used internally only
 
 const mongoConnect = (callback) =>{
-    MongoClient.connect('mongodb://localhost:27017/toDoListDB',  { useUnifiedTopology: true })
+    MongoClient.connect('mongodb://localhost:27017/BookStoreDB',  { useUnifiedTopology: true })
         .then(client => {
         console.log('connected');
         _db = client.db(); //db() - pass the name of the db as an argument
