@@ -9,8 +9,9 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = (req, res)=> {
-    const product = new Product(req.body.title, req.body.imageUrl, req.body.price, req.body.description);
-
+    console.log(req.user);
+    const product = new Product(req.body.title, req.body.imageUrl, req.body.price, req.body.description, null, req.user._id);
+    
     product
     .save()
     .then(result => {

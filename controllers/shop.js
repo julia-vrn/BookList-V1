@@ -49,14 +49,17 @@ exports.getIndex = (req, res)=> {
 
 
 exports.postCart = (req, res) => {
-  /*  const productId = req.body.productId;
-    console.log(productId);
-    //get product
-    Product.findById(productId, (product) => {
-        Cart.addProduct(productId, product.price);
+    const productId = req.body.productId;
+    Product.findById(productId)
+    .then(product => {
+        req.user.addToCart(product);
+    })
+    .then(result => {
+        console.log("Product saved");
+        res.redirect('/cart');
     });
-    
-    res.redirect('/cart');*/
+
+  
 }
 
 
@@ -68,30 +71,27 @@ exports.getOrders = (req, res) => {
 }
 
 exports.getCart = (req, res) => {
-    Cart.getCart(cart => {
-        Product.fetchAll(products => {
-            const cartProducts = [];
-            for(product of products){
-                const cartProductData = cart.products.find(cartProduct => cartProduct.id === product.id);
-                if(cartProductData) {
-                    cartProducts.push({productData: product, qty: cartProductData.qty});
-                }
-            }
-            res.render('shop/cart.ejs', {
-                path: '/cart',
-                pageTitle: 'Your Cart',
-                products: cartProducts
-            });
-        })
+    req.user.getCart()
+    .then(products => {
+        res.render('shop/cart.ejs', {
+            path: '/cart',
+            pageTitle: 'Your Cart',
+            products: products
+        });
+    })
+    .catch(error =>{
+        console.log(error);
     });
-    
+
 };
 
 exports.postCartDeleteProduct = (req, res) => {
     const productId = req.body.productId;
-    //get the price as well before we issue the delete request
-    Product.findById(productId, product => {
-        Cart.deleteProduct(productId, product.price);
+    req.user.deleteItemFromCart(productId)
+    .then(result => {
         res.redirect('/cart');
+    })
+    .catch(error => {
+        console.log('Failed to delete an item.');
     });
 }
