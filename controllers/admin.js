@@ -9,19 +9,41 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = (req, res)=> {
-    console.log(req.user);
-    const product = new Product(req.body.title, req.body.imageUrl, req.body.price, req.body.description, null, req.user._id);
-    
-    product
-    .save()
+    const title = req.body.title;
+    const price = req.body.price;
+    const description = req.body.description;
+    const imageUrl = req.body.imageUrl;
+
+    const product = new Product({
+        title: title, 
+        price: price, 
+        description: description, 
+        imageUrl: imageUrl,
+        userId: req.user._id
+    }); //mapping
+   //save method is provided by mongoose
+    product.save()
     .then(result => {
-      // console.log(result);
-      console.log('Created Product');
-      res.redirect('/admin/products');
+        console.log('Product added');
+        res.redirect('/admin/products');
     })
-    .catch(err => {
-      console.log(err);
-    });
+    .catch(error => {
+        console.log(error);
+    })
+
+    // console.log(req.user);
+    // const product = new Product(req.body.title, req.body.imageUrl, req.body.price, req.body.description, null, req.user._id);
+    
+    // product
+    // .save()
+    // .then(result => {
+    //   // console.log(result);
+    //   console.log('Created Product');
+    //   res.redirect('/admin/products');
+    // })
+    // .catch(err => {
+    //   console.log(err);
+    // });
 }
 
 
@@ -58,33 +80,49 @@ exports.postEditProduct = (req, res) => {
     const updatedimageUrl = req.body.imageUrl;
     const updatedDescription = req.body.description;
 
-    const updatedProduct = new Product(updatedTitle, updatedimageUrl, updatedPrice, updatedDescription, productId);
-    console.log("PRODUCT ID" + productId);
-    
-    updatedProduct.save();
-    res.redirect('/admin/products');
-}
-
-exports.getProducts = (req, res) => {
-    Product.fetchAll()
-    .then(products => {
-         res.render('admin/products.ejs',
-        {
-            products: products,
-            pageTitle: 'Admin Products',
-            path: '/admin/products'
-        });
+    Product.findById(productId).then(product => {
+        product.title = updatedTitle;
+        product.description = updatedDescription;
+        product.price = updatedPrice;
+        product.imageUrl = updatedimageUrl;
+        return product.save();
+    })
+    .then(result => {
+        res.redirect('/admin/products');
     })
     .catch(error => {
         console.log(error);
-        
     });
+}
+
+exports.getProducts = (req, res) => {
+    Product.find().then(products => {
+        res.render('admin/products.ejs',
+            {
+                products: products,
+                pageTitle: 'Adming Products',
+                path: '/admin/products'
+            }); 
+    });
+    // Product.fetchAll()
+    // .then(products => {
+    //      res.render('admin/products.ejs',
+    //     {
+    //         products: products,
+    //         pageTitle: 'Admin Products',
+    //         path: '/admin/products'
+    //     });
+    // })
+    // .catch(error => {
+    //     console.log(error);
+        
+    // });
 }
 
 
 exports.postDeleteProduct = (req, res) => {
     const productId = req.body.productId;
-    Product.deleteById(productId)
+    Product.findByIdAndDelete(productId)
     .then(() => {
         res.redirect('/admin/products');
     });

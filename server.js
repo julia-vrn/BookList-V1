@@ -2,7 +2,8 @@ const express = require('express');
 const path = require('path');
 const ejs = require('ejs');
 const bodyParser = require('body-parser');
-const mongoConnect = require('./utilities/db').mongoConnect;
+const mongoose = require('mongoose');
+//const mongoConnect = require('./utilities/db').mongoConnect;
 
 const User = require('./models/user');
 const adminRoute = require('./routes/admin'); //import admin route .js is not needed as it will be added automatically by express
@@ -14,10 +15,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use((req, res, next) => { //! the order is important!
-    User.findById("603e60082cbc112483fda0e7")
+    User.findById("604f510fd382d93d98dfae9f")
     .then(user => {
         console.log(user);
-        req.user = new User(user.name, user.email, user.cart, user._id);
+        req.user = user;
         next();
     })
     .catch(error => {
@@ -40,9 +41,29 @@ app.use((req, res)=>{
 });
 
 
-mongoConnect(() => {
-    app.listen(3000, ()=>{
+/*mongoConnect(() => {
+    app.listen(8000, ()=>{
         console.log('server is up');
     });
+});*/
+
+mongoose.connect('mongodb://localhost:27017/BookStoreDB',  { useUnifiedTopology: true })
+.then(result => {
+    User.findOne().then(user => {
+        if(!user) {
+            const user = new User({
+            name: "John",
+            email: "email@doe.com",
+            cart: {
+                items: []
+            }
+        });
+        user.save();
+        }
+    });
+    
+    app.listen(8000);
+}).catch(error => {
+    console.log(error);
 });
 
