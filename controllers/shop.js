@@ -13,7 +13,8 @@ exports.getProducts = (req, res)=> {
             {
                 products: products,
                 pageTitle: 'All Products',
-                path: '/products'
+                path: '/products',
+                isAuthenticated: req.session.isLoggedIn
             }); 
     });
     // Product.fetchAll(products => {
@@ -27,6 +28,7 @@ exports.getProducts = (req, res)=> {
 }
 
 exports.getProduct = (req, res) => {
+    console.log("Is Auth?", req.session.isLoggedIn);
     const productId = req.params.productId;
     Product.findById(productId)
     .then(product => {
@@ -34,7 +36,8 @@ exports.getProduct = (req, res) => {
             res.render('shop/product-detail.ejs', {
             product: product,
             pageTitle: product.title,
-            path: '/products'
+            path: '/products',
+            isAuthenticated: req.session.isLoggedIn
         });
     })
     // Product.findById(productId)
@@ -48,12 +51,14 @@ exports.getProduct = (req, res) => {
 }
 
 exports.getIndex = (req, res)=> {
+    
     Product.find().then(products => {
         res.render('shop/index.ejs',
             {
                 products: products,
                 pageTitle: 'All Products',
-                path: '/'
+                path: '/',
+                isAuthenticated: req.session.isLoggedIn
             }); 
     });
    
@@ -83,7 +88,8 @@ exports.getCart = (req, res) => {
         res.render('shop/cart.ejs', {
             path: '/cart',
             pageTitle: 'Your Cart',
-            products: products
+            products: products,
+            isAuthenticated: req.session.isLoggedIn
         });
     })
     .catch(error =>{
@@ -139,7 +145,8 @@ exports.getOrders = (req, res) => {
         res.render('shop/orders.ejs', {
             path: '/orders',
             pageTitle: 'Your Orders',
-            orders: orders
+            orders: orders,
+            isAuthenticated: req.session.isLoggedIn
         });
     })
     .catch(error => {

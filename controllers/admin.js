@@ -4,6 +4,7 @@ exports.getAddProduct = (req, res, next) => {
     res.render('admin/edit-product.ejs', {
       pageTitle: 'Add Product',
       path: '/admin/add-product',
+      isAuthenticated: req.session.isLoggedIn,
       editing: false
     });
 }
@@ -19,7 +20,8 @@ exports.postAddProduct = (req, res)=> {
         price: price, 
         description: description, 
         imageUrl: imageUrl,
-        userId: req.user._id
+        userId: req.user._id,
+        isAuthenticated: req.session.isLoggedIn
     }); //mapping
    //save method is provided by mongoose
     product.save()
@@ -63,7 +65,8 @@ exports.getEditProduct = (req, res, next) => {
             pageTitle: 'Add Product',
             path: '/admin/edit-product',
             editing: editMode, 
-            product: product
+            product: product,
+            isAuthenticated: req.session.isLoggedIn
           });
     })
     .catch(errpr => {
@@ -101,7 +104,8 @@ exports.getProducts = (req, res) => {
             {
                 products: products,
                 pageTitle: 'Adming Products',
-                path: '/admin/products'
+                path: '/admin/products',
+                isAuthenticated: req.session.isLoggedIn
             }); 
     });
     // Product.fetchAll()
